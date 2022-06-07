@@ -1,8 +1,9 @@
 package com.example.communicatie.service;
 
 import com.example.communicatie.exception.RecordNotFoundException;
+import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
-import com.example.communicatie.repository.DocFileDao;
+import com.example.communicatie.repository.FileRepository;
 import com.example.communicatie.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,11 @@ public class StudentService {
 
 
     private final StudentRepository repository;
-    private final DocFileDao dao;
-
+    private final FileRepository photoRepository;
     @Autowired
-    public StudentService(StudentRepository repository, DocFileDao dao){
+    public StudentService(StudentRepository repository, FileRepository photoRepository){
         this.repository = repository;
-        this.dao = dao;
+        this.photoRepository = photoRepository;
     }
 
     public List<Student> getStudents() {
@@ -81,19 +81,19 @@ public class StudentService {
 
     }
 
-    public void assignPhotoToStudent(Long photoId, String email) {
+    public void assignPhotoToStudent(String name, String email) {
 
-        var optionalPhoto = dao.findById(photoId);
+        Optional<FileUploadResponse> optionalPhoto  = photoRepository.findById(name);
 
-        var optionalStudent = repository.findById(email);
+        Optional<Student> optionalStudent = repository.findById(email);
 
         if (optionalPhoto.isPresent() && optionalStudent.isPresent()) {
 
-            var photo = optionalPhoto.get();
+            FileUploadResponse photo = optionalPhoto.get();
 
-            var student = optionalStudent.get();
+            Student student = optionalStudent.get();
 
-            student.setFileDocument(photo);
+            student.setFile(photo);
 
             repository.save(student);
 

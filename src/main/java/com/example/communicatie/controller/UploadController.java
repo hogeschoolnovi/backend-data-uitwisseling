@@ -40,9 +40,7 @@ public class UploadController {
 
         String contentType = file.getContentType();
 
-        FileUploadResponse response = new FileUploadResponse(fileName, contentType, url );
-
-        return response;
+        return new FileUploadResponse(fileName, contentType, url );
     }
 
 //    get for single download

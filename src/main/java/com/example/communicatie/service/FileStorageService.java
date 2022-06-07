@@ -1,5 +1,7 @@
 package com.example.communicatie.service;
 
+import com.example.communicatie.model.FileUploadResponse;
+import com.example.communicatie.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,8 +27,9 @@ public class FileStorageService {
     @Value("${my.upload_location}")
     private Path fileStoragePath;
     private String fileStorageLocation;
+    private FileRepository repository;
 
-    public FileStorageService(@Value("${my.upload_location}") String fileStorageLocation) {
+    public FileStorageService(@Value("${my.upload_location}") String fileStorageLocation, FileRepository repository) {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
 
         this.fileStorageLocation = fileStorageLocation;
@@ -37,6 +40,7 @@ public class FileStorageService {
             throw new RuntimeException("Issue in creating file directory");
         }
 
+        this.repository = repository;
     }
 
     public String storeFile(MultipartFile file) {
@@ -51,6 +55,7 @@ public class FileStorageService {
             throw new RuntimeException("Issue in storing the file", e);
         }
 
+        repository.save(new FileUploadResponse(fileName, file.getContentType(), filePath.toString()));
         return fileName;
     }
 

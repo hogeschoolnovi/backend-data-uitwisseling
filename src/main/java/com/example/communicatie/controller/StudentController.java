@@ -1,11 +1,13 @@
 package com.example.communicatie.controller;
 
+import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
+import com.example.communicatie.service.FileStorageService;
 import com.example.communicatie.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -14,9 +16,12 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
+    private final UploadController controller;
 
     @Autowired
-    public StudentController(StudentService service) {this.service = service;}
+    public StudentController(StudentService service, UploadController controller) {this.service = service;
+        this.controller = controller;
+    }
 
     @GetMapping
     public List<Student> getStudents(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
@@ -72,11 +77,13 @@ public class StudentController {
 
     }
 
-    @PostMapping("/{id}/userdata")
+    @PostMapping("/{id}/photo")
     public void assignPhotoToStudent(@PathVariable("id") String id,
-                                     @RequestBody Long photoId) {
+                                     @RequestBody MultipartFile file) {
 
-        service.assignPhotoToStudent(photoId, id);
+        FileUploadResponse photo = controller.singleFileUpload(file);
+
+        service.assignPhotoToStudent(photo.getFileName(), id);
 
     }
 }
