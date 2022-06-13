@@ -20,11 +20,11 @@ In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in d
     * [Student opslaan](#1-student-aanmaken)
     * [Student opvragen](#2-student-opvragen)
     * [Alle Studenten opvragen](#3-alle-studenten-opvragen)
-    * [Student gegevens bewerken](*4-student-bewerken)
-    * [Afbeelding voor student opslaan](#5-profielfoto-opslaan-voor-student)
-    * [Student verwijderen](#6-student-verwijderen)
-    * [Afbeelding opslaan](#7-afbeelding-opslaan)
-    * [Afbeelding ophalen](#8-afbeelding-opvragen)
+    * [Student gegevens bewerken](*4-student-gegevens-bewerken)
+    * [Afbeelding voor student opslaan](#5-afbeelding-voor-student-opslaan)
+    * [Student verwijderen](#6-student-verwijderen-uit-database)
+    * [Afbeelding opslaan](#7-afbeelding-uploaden)
+    * [Afbeelding ophalen](#8-afbeelding-ophalen)
 
 ## Rest endpoints
 Alle rest-endpoints draaien op deze server: http://localhost:8080 Dit is de basis-uri. Alle voorbeeld-data betreffende de endpoints zijn in JSON format weergegeven. 
