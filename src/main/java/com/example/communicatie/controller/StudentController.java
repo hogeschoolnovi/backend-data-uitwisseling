@@ -2,12 +2,13 @@ package com.example.communicatie.controller;
 
 import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
-import com.example.communicatie.service.FileStorageService;
 import com.example.communicatie.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin
@@ -16,14 +17,15 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
-    private final UploadController controller;
+    private final UploadControllerDB controller;
 
     @Autowired
-    public StudentController(StudentService service, UploadController controller) {this.service = service;
+    public StudentController(StudentService service, UploadControllerDB controller) {this.service = service;
         this.controller = controller;
     }
 
     @GetMapping
+    @Transactional
     public List<Student> getStudents(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
 
         List<Student> students;
@@ -44,6 +46,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @Transactional
     public Student getStudent(@PathVariable("id") String id) {
 
         var student = service.getStudent(id);
@@ -79,7 +82,7 @@ public class StudentController {
 
     @PostMapping("/{id}/photo")
     public void assignPhotoToStudent(@PathVariable("id") String id,
-                                     @RequestBody MultipartFile file) {
+                                     @RequestBody MultipartFile file) throws IOException {
 
         FileUploadResponse photo = controller.singleFileUpload(file);
 

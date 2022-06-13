@@ -14,7 +14,7 @@ public class Student {
     private String course;
 
     @OneToOne
-    FileUploadResponse file;
+    FileDocument file;
 
     public Student() {
     }
@@ -37,7 +37,7 @@ public class Student {
         return course;
     }
 
-    public FileUploadResponse getFile() {
+    public FileDocument getFile() {
         return file;
     }
 
@@ -53,7 +53,7 @@ public class Student {
         this.course = course;
     }
 
-    public void setFile(FileUploadResponse file) {
+    public void setFile(FileDocument file) {
         this.file = file;
     }
 }

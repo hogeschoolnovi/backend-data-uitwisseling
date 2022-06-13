@@ -1,10 +1,12 @@
 package com.example.communicatie.service;
 
 import com.example.communicatie.exception.RecordNotFoundException;
+import com.example.communicatie.model.FileDocument;
 import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
-import com.example.communicatie.repository.FileRepository;
+import com.example.communicatie.repository.FileUploadRepository;
 import com.example.communicatie.repository.StudentRepository;
+import com.example.communicatie.repository.UploadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,14 @@ public class StudentService {
 
 
     private final StudentRepository repository;
-    private final FileRepository photoRepository;
+    private final UploadRepository photoRepository;
+
+    private final FileUploadRepository uploadRepository;
     @Autowired
-    public StudentService(StudentRepository repository, FileRepository photoRepository){
+    public StudentService(StudentRepository repository, UploadRepository photoRepository, FileUploadRepository uploadRepository){
         this.repository = repository;
         this.photoRepository = photoRepository;
+        this.uploadRepository = uploadRepository;
     }
 
     public List<Student> getStudents() {
@@ -83,13 +88,11 @@ public class StudentService {
 
     public void assignPhotoToStudent(String name, String email) {
 
-        Optional<FileUploadResponse> optionalPhoto  = photoRepository.findById(name);
-
         Optional<Student> optionalStudent = repository.findById(email);
 
-        if (optionalPhoto.isPresent() && optionalStudent.isPresent()) {
+        if (optionalStudent.isPresent()) {
 
-            FileUploadResponse photo = optionalPhoto.get();
+            FileDocument photo = photoRepository.findByFileName(name);
 
             Student student = optionalStudent.get();
 
