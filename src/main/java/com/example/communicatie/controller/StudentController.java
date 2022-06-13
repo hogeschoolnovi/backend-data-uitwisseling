@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin
@@ -17,28 +16,22 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
-    private final UploadControllerDB controller;
+    private final PhotoController controller;
 
     @Autowired
-    public StudentController(StudentService service, UploadControllerDB controller) {this.service = service;
+    public StudentController(StudentService service, PhotoController controller) {
+        this.service = service;
         this.controller = controller;
     }
 
     @GetMapping
     @Transactional
-    public List<Student> getStudents(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
+    public List<Student> getStudents() {
 
         List<Student> students;
 
-        if (name == null) {
 
-            students = service.getStudents();
-
-        } else {
-
-            students = service.findStudentsByName(name);
-
-        }
+        students = service.getStudents();
 
 
         return students;
@@ -47,46 +40,40 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @Transactional
-    public Student getStudent(@PathVariable("id") String id) {
+    public Student getStudent(@PathVariable("id") Long studentNumber) {
 
-        var student = service.getStudent(id);
-
-        return student;
+        return service.getStudent(studentNumber);
 
     }
 
     @PostMapping
     public Student saveStudent(@RequestBody Student student) {
 
-        var st = service.saveStudent(student);
-
-        return student;
+        return service.saveStudent(student);
 
     }
 
-    @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable String id, @RequestBody Student student) {
+    @PutMapping("/{studentNumber}")
+    public Student updateStudent(@PathVariable Long studentNumber, @RequestBody Student student) {
 
-        service.updateStudent(id, student);
-
-        return student;
+        return service.updateStudent(studentNumber, student);
 
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable("id") String id) {
+    public void deleteStudent(@PathVariable("id") Long studentNumber) {
 
-        service.deleteStudent(id);
+        service.deleteStudent(studentNumber);
 
     }
 
     @PostMapping("/{id}/photo")
-    public void assignPhotoToStudent(@PathVariable("id") String id,
-                                     @RequestBody MultipartFile file) throws IOException {
+    public void assignPhotoToStudent(@PathVariable("id") Long studentNumber,
+                                     @RequestBody MultipartFile file) {
 
         FileUploadResponse photo = controller.singleFileUpload(file);
 
-        service.assignPhotoToStudent(photo.getFileName(), id);
+        service.assignPhotoToStudent(photo.getFileName(), studentNumber);
 
     }
 }

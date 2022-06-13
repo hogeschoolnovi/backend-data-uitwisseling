@@ -1,6 +1,7 @@
 package com.example.communicatie.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
@@ -8,21 +9,32 @@ import javax.persistence.OneToOne;
 public class Student {
 
     @Id
+    @GeneratedValue
+    private Long studentNumber;
     private String emailAddress;
 
     private String name;
     private String course;
 
     @OneToOne
-    FileDocument file;
+    FileUploadResponse file;
 
     public Student() {
     }
-
-    public Student(String emailAdress, String name, String course) {
-        this.emailAddress = emailAdress;
+    public Student(String emailAddress, String name, String course) {
+        this.emailAddress = emailAddress;
         this.name = name;
         this.course = course;
+    }
+    public Student(Long studentNumber, String emailAddress, String name, String course) {
+        this.studentNumber = studentNumber;
+        this.emailAddress = emailAddress;
+        this.name = name;
+        this.course = course;
+    }
+
+    public Long getStudentNumber() {
+        return studentNumber;
     }
 
     public String getEmailAddress() {
@@ -37,12 +49,16 @@ public class Student {
         return course;
     }
 
-    public FileDocument getFile() {
+    public FileUploadResponse getFile() {
         return file;
     }
 
-    public void setEmailAddress(String emailAdress) {
-        this.emailAddress = emailAdress;
+    public void setStudentNumber(Long studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public void setName(String name) {
@@ -53,7 +69,7 @@ public class Student {
         this.course = course;
     }
 
-    public void setFile(FileDocument file) {
+    public void setFile(FileUploadResponse file) {
         this.file = file;
     }
 }

@@ -1,5 +1,5 @@
 INSERT INTO student
-    (email_address, name, course)
+    (student_number, email_address, name, course)
 VALUES
-       ('sam.b@test.nl', 'Sam Barnhoorn', 'Front-end'),
-       ('mark.r@test.nl', 'Mark Rensen', 'Backend');
+       (1001, 'sam.b@test.nl', 'Sam Barnhoorn', 'Front-end'),
+       (1002, 'mark.r@test.nl', 'Mark Rensen', 'Backend');

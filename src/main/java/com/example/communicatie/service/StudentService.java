@@ -1,12 +1,10 @@
 package com.example.communicatie.service;
 
 import com.example.communicatie.exception.RecordNotFoundException;
-import com.example.communicatie.model.FileDocument;
 import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
 import com.example.communicatie.repository.FileUploadRepository;
 import com.example.communicatie.repository.StudentRepository;
-import com.example.communicatie.repository.UploadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +16,12 @@ public class StudentService {
 
 
     private final StudentRepository repository;
-    private final UploadRepository photoRepository;
 
     private final FileUploadRepository uploadRepository;
+
     @Autowired
-    public StudentService(StudentRepository repository, UploadRepository photoRepository, FileUploadRepository uploadRepository){
+    public StudentService(StudentRepository repository, FileUploadRepository uploadRepository){
         this.repository = repository;
-        this.photoRepository = photoRepository;
         this.uploadRepository = uploadRepository;
     }
 
@@ -34,15 +31,9 @@ public class StudentService {
 
     }
 
-    public List<Student> findStudentsByName(String name) {
+    public Student getStudent(Long studentNumber) {
 
-        return repository.findByNameContainingIgnoreCase(name);
-
-    }
-
-    public Student getStudent(String email) {
-
-        Optional<Student> student = repository.findById(email);
+        Optional<Student> student = repository.findById(studentNumber);
 
         if(student.isPresent()) {
 
@@ -62,15 +53,32 @@ public class StudentService {
 
     }
 
-    public void updateStudent(String email, Student student) {
+    public Student updateStudent(Long studentNumber, Student student) {
 
-        Optional<Student> optionalStudent = repository.findById(email);
+        Optional<Student> optionalStudent = repository.findById(studentNumber);
 
         if (optionalStudent.isPresent()) {
 
-            repository.deleteById(email);
+            Student old = optionalStudent.get();
+            if(student.getStudentNumber() != null){
+                old.setStudentNumber(studentNumber);
+            }
+            if(student.getEmailAddress() != null){
+                old.setEmailAddress(student.getEmailAddress());
+            }
+            if(student.getCourse() != null){
+                old.setCourse(student.getCourse());
+            }
+            if(student.getName() != null){
+                old.setName(student.getName());
+            }
+            if(old.getFile() != null && student.getFile() != null){
+                old.setFile(student.getFile());
+            } else if (old.getFile() != null) {
+                old.setFile(old.getFile());
+            }
 
-            repository.save(student);
+            return repository.save(old);
 
         } else {
 
@@ -80,19 +88,21 @@ public class StudentService {
 
     }
 
-    public void deleteStudent(String email) {
+    public void deleteStudent(Long studentNumber) {
 
-        repository.deleteById(email);
+        repository.deleteById(studentNumber);
 
     }
 
-    public void assignPhotoToStudent(String name, String email) {
+    public void assignPhotoToStudent(String name, Long studentNumber) {
 
-        Optional<Student> optionalStudent = repository.findById(email);
+        Optional<Student> optionalStudent = repository.findById(studentNumber);
 
-        if (optionalStudent.isPresent()) {
+        Optional<FileUploadResponse> fileUploadResponse = uploadRepository.findByFileName(name);
 
-            FileDocument photo = photoRepository.findByFileName(name);
+        if (optionalStudent.isPresent() && fileUploadResponse.isPresent()) {
+
+            FileUploadResponse photo = fileUploadResponse.get();
 
             Student student = optionalStudent.get();
 
