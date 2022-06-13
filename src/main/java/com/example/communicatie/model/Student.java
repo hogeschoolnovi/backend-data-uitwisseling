@@ -11,8 +11,8 @@ public class Student {
     @Id
     @GeneratedValue
     private Long studentNumber;
+    
     private String emailAddress;
-
     private String name;
     private String course;
 
