@@ -3,200 +3,89 @@
 ## Beschrijving
 Deze backend is gebouwd door NOVI en mag alleen worden gebruikt voor opleidings-doeleinden.
 
-Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requesten voor een student en het uploaden en downloaden van een afbeelding. Het is niet mogelijk om andere informatie (naast `email`, `naam`, `opleiding` en `afbeelding`) op te slaan in deze database. _Let op_: de database met gebruikers wordt vaak binnen één uur weer geleegd.
+Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requesten voor een student en het uploaden en downloaden van een afbeelding. Het is niet mogelijk om andere informatie (naast `studentNumber`, `email`, `naam`, `opleiding` en `afbeelding`) op te slaan in deze database.
 
-De backend draait op een [Heroku](https://www.heroku.com/) server. Deze server wordt automatisch inactief wanneer er een tijdje geen requests gemaakt worden. Het l **eerste** request die de server weer uit de 'slaapstand' haalt zal daarom maximaal 30 seconden op zich kunnen laten wachten. Daarna zal de responsetijd normaal zijn. Voer daarom altijd eerst een test-request uit.
+Binnen de backend wordt gebruik gemaakt van een postgres database, deze draait op jdbc:postgresql://localhost:5432/communication. Deze instellingen staan in de application.properties. Deze zullen aangepast moeten worden als u deze applicatie op uw eigen pc wilt draaien. 
+Pas in dat geval de volgende waarde aan:
+- spring.datasource.url (pas hier de naam "communication" aan, naar de naam van uw eigen database).
+- spring.datasource.username (verander deze waarde naar de naam van de hoofdgebruiker van uw database).
+- spring.datasource.password (verander deze waarde naar het wachtwoord van uw eigen database).
+
+In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in de projectmap van de applicatie. Als u deze code cloned, moet ook de volgende waarde aangepast worden in de application.properties:
+- my.upload_location (pas deze locatie aan naar de plaats waar u het project op uw pc hebt staan).
 
 ## Inhoud
 * [Beschrijving](#beschrijving)
 * [Rest endpoints](#rest-endpoints)
-    * [Student opslaan] 
-    * [Student opvragen](#3-gebruiker-opvragen)
-    * [Alle Studenten opvragen](#6-alle-gebruikers-opvragen-[admin])
-    * [Afbeelding uploaden](#4-profielfoto-uploaden)
-    * [Afbeelding 
-    * [Alle Studenten opvragen](#6-alle-gebruikers-opvragen-[admin])
-   * [Beveiligd endpoint [user]](#7-beveiligd-endpoint-[user])
-   * [Beveiligd endpoint [admin]](#8-beveiligd-endpoint-[admin])
-   * [Errors](#9-errors)
-* [Postman gebruiken](#rest-endpoint-benaderen-in-postman)
-* [Update November 2021](#update-november-2021)
-
-## Gebruikersrollen
-Deze backend ondersteunt het gebruik van twee user-rollen:
-1. `user`
-2. `admin`
-
-Elke gebruiker kan één of meerdere rollen hebben. Deze worden vastgesteld bij het _aanmaken_ van de gebruiker en kunnen daarna niet meer worden gewijzigd. Het is belangrijk om je te realiseren dat dat wanneer een gebruiker de `admin`-rol heeft dat deze dan niet _automatisch_ ook de `user`-rol heeft. 
-
-Dat zit zo: stel, je maakt een gebruiker aan met een admin-rol en logt daarmee in. Als je met dit account REST-endpoints wil benaderen die toegankelijk zijn voor gebruikers met een `user` rol, zou je wellicht denken dat een admin dan automatisch ook geautoriseerd is om deze te bekijken. Dat is echter niet zo. Als je met een account dat alléén een admin rol heeft probeert om een user-endpoint te benaderen, geeft de applicatie de volgende error:
-
-```
-HTTP 401 Unauthorized
-```
-
-In de situatie dat een admin zowel gebruikers-rechten heeft als admin-rechten, krijgt deze dus twee rollen toegewezen. 
+    * [Student opslaan](#1-student-opslaan)
+    * [Student opvragen](#2-student-opvragen)
+    * [Alle Studenten opvragen](#3-alle-studenten-opvragen)
+    * [Student gegevens bewerken](*4-student-bewerken)
+    * [Afbeelding voor student opslaan](#5-profielfoto-opslaan-voor-student)
+    * [Student verwijderen](#6-student-verwijderen)
+    * [Afbeelding opslaan](#7-afbeelding-opslaan)
+    * [Afbeelding ophalen](#8-afbeelding-opvragen)
 
 ## Rest endpoints
-Alle rest-endpoints draaien op deze server: https://frontend-educational-backend.herokuapp.com/. Dit is de basis-uri. Alle voorbeeld-data betreffende de endpoints zijn in JSON format weergegeven. Wanneer er wordt vermeld dat er een **token** vereist is, betekent dit dat er een `Bearer` + `token` _header_ moet worden meegestuurd met het request:
+Alle rest-endpoints draaien op deze server: http://localhost:8080 Dit is de basis-uri. Alle voorbeeld-data betreffende de endpoints zijn in JSON format weergegeven. 
 
-```json
-headers: {
-   "Content-Type": "application/json",
-   "Authorization": "Bearer xxx.xxx.xxx",
-}
-```
+### 1. Student aanmaken.
+`POST /students`
 
-### 0. Test
-`GET /api/test/all`
-
-Dit endpoint is vrij toegankelijk en is niet afgeschermd. Het is daarom een handig endpoint om te testen of het verbinden met de backend werkt. De response bevat een enkele string: `"De API is bereikbaar."`
-
-### 1. Registreren
-`POST /api/auth/signup`
-
-Het aanmaken van een nieuwe gebruiker (met user-rol) vereist de volgende informatie:
+Het aanmaken van een nieuwe student vereist de volgende informatie:
 
 ```json
 {
-   "username": "piet",
-   "email" : "piet@novi.nl",
-   "password" : "123456",
-   "role": ["user"]
+   "emailAddress": "johan.v@test.nl",
+   "name": "Johan van Oosten",
+   "course": "Back-end"
 }
 ```
 
-Let hierbij op de volgende vereisten:
-* Het emailadres moet daadwerkelijk een `@` bevatten
-* Het wachtwoord en gebruikersnaam moeten **minimaal 6 tekens** bevatten
-* Wanneer je een gebruiker probeert te registreren met een username die al bestaat, krijg je een foutcode. De details over deze foutmelding vindt je in `e.response`.
+### 2. Student opvragen.
+`GET /students/1001`
 
-Indien de registratie succesvol was, ontvang je een succesmelding.
+Het ophalen van een student, gebeurd aan de hand van het studenten nummer. Deze sturen we mee via de url, in dit geval 1001.
 
-#### Optionele velden
-Het is toegestaan om een _string_ mee te sturen onder de `info`-key, zodat je hier additionele informatie over de gebruiker in kunt opslaan:
+
+### 3. Alle studenten opvragen.
+`GET /students`
+
+Hiermee halen we alle geregistreerde studenten uit de database.
+
+### 4. Student gegevens bewerken.
+`PUT /students/1001`
+
+Door het studentnummer mee te geven in de url, kunnen we de student met dat studentnummer bewerken. Het json object dat mee gestuurd moet worden is:
 
 ```json
 {
-   "username": "piet",
-   "email" : "piet@novi.nl",
-   "password" : "123456",
-   "info": "Ik woon in Utrecht",
-   "role": ["user"]
+    "emailAddress": "sam.b@test.nl",
+    "name": "Sam Barnhoorn",
+    "course": "Back-end",
+    "fileDocument": null
 }
 ```
+Hierbij zijn de waarde van de velden (de delen achter de dubbele punt) variabel en kunnen dus gewijzigd worden.
 
-#### Rollen
-Wanneer je een gebruiker met admin-rol wil aanmaken, verander je de rol als volgt: "role": ["admin"]. Het is ook mogelijk een gebruiker aan te maken met twee rollen:
+### 5. Afbeelding voor student opslaan.
+`POST /students/1001/photo`
 
-```json
-{
-   "role": ["user", "admin"]
-}
-```
+Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding te versturen onder de key: "file":
 
-### 2. Inloggen
-`POST /api/auth/signin`
 
-Het inloggen van een bestaande gebruiker kan alleen als deze al geregistreerd is. Inloggen vereist de volgende informatie:
+### 6. Student verwijderen uit database.
+`DELETE /students/1001`
 
-```json
-{
-   "username": "user",
-   "password" : "123456",
-}
-```
+Doormiddel van het studentnummer wat is mee gestuurd in de url, worden de student gegevens van de student met dit nummer verwijderd uit de database.
 
-De response bevat een authorisatie-token (JWT) en alle gebruikersinformatie. Onderstaand voorbeeld laat de repsonse zien na het inloggen van een gebruiker met een admin-rol:
+### 7. Afbeelding uploaden
+`POST /upload`
 
-```json
-{
-    "id": 6,
-    "username": "mod3",
-    "email": "mod3@novi.nl",
-    "roles": [
-        "ROLE_USER",
-        "ROLE_MODERATOR"
-    ],
-    "accessToken": "eyJhJIUzUxMiJ9.eyJzdWICJleQ0OTR9.AgP4vCsgw5TMj_AQAS-J8doHqADTA",
-    "tokenType": "Bearer"
-}
-```
 
-### 3. Gebruiker opvragen
-`GET /api/user`
+Er kan een pasfoto worden toegevoegd aan de database door een afbeelding te uploaden naar deze url. Dit gebeurd door de afbeelding te versturen onder de key: "file":
 
-Het opvragen van de gebruikersgegevens vereist een **token**. Op die manier ziet de backend wiens gebruikersgegevens worden opgevraagd. Een gebruiker mag alleen zijn eigen gebruikersgegevens opvragen. De response bevat alle informatie over de gebruiker zoals beschreven bij registratie:
+### 8. Afbeelding ophalen
+`GET /download/foto.JPG`
 
-```json
-{
-    "id": 3,
-    "username": "piet",
-    "email": "piet@novi.nl",
-    "info": "Ik woon in Utrecht",
-    "roles": [
-        "ROLE_USER"
-    ]
-}
-```
-### 4. Profielfoto uploaden
-`POST /api/user/image`
-
-Een gebruiker kan een profielfoto aan zijn profiel toevoegen. Dit vereist een **token**. De afbeelding moet worden aangeleverd in de vorm van een base64-string: 
-
-```json
-{
-  "base64Image":            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
-}
-```
-
-Wanneer dit succesvol is, wordt het volledige gebruikers-object geretourneerd met alle huidige informatie over de gebruiker.
-
-### 5. Gebruiker aanpassen
-`PUT /api/user`
-
-Het is mogelijk om een gebruiker zijn eigen e-mail, wachtwoord, profielfoto of informatie aan te laten passen. Dit vereist, naast de gegevens zelf, ook een token. Het aanpassen van het emailadres doe je als volgt:
-
-```json
-{
-   "email" : "sjaak@sjaak.nl",
-}
-```
-
-Het aanpassen van het wachtwoord doe je als volgt:
-
-```json
-{
-   "password": "123456",
-   "repeatedPassword": "123456"
-}
-```
-
-Wanneer dit succesvol is, wordt het volledige gebruikers-object geretourneerd met alle huidige informatie over de gebruiker.
-
-### 6. Alle gebruikers opvragen [admin]
-`GET /api/admin/all`
-
-Dit rest-endpoint geeft een lijst van alle gebruikers terug, maar is alleen toegankelijk voor gebruikers met de admin-rol. Het opvragen van deze gegevens vereist een **token**.
-
-### 7. Beveiligd endpoint [user]
-`GET /api/test/user`
-
-Alleen gebruikers met een user-rol kunnen dit endpoint benaderen. Het opvragen van deze gegevens vereist een **token**. De response bevat een string.
-
-### 8. Beveiligd endpoint [admin]
-`GET /api/test/admin`
-Alleen gebruikers met een admin-rol kunnen dit endpoint benaderen. Het opvragen van deze gegevens vereist een **token**. De response bevat een enkele string: `"Admin Board."`.
-
-### 9. Errors
-De backend kan verschillende errors teruggeven. We hebben ons best gedaan om deze allemaal af te vangen. Lees dan ook vooral de foutmelding in `e.response`.
-
-## Restpoints benaderen in Postman
-Wanneer je een authorisation-token hebt ontvangen zal de backend bij alle beveiligde endpoints willen controleren wie de aanvrager is op basis van deze token. Dit zul je dus ook in Postman mee moeten geven.
-
-![Plaatje postman met Authorization](img/auth_postman_example.png)
-
-Onder het kopje headers voeg je als `Key` `Authorization` toe. Daarin zet je `<TOKEN TYPE> <SPATIE> <ACCESSTOKEN>` (zonder <>). 
-
-## Update November 2021
-Deze backend is geüpdate en draait nu op een nieuw webadres en heeft meer functionaliteit. Maar geen zorgen, het oude adres: https://polar-lake-14365.herokuapp.com werkt nog steeds.
+Door in deze url de naam van de foto mee te sturen, wordt de foto opgehaald uit de filestorage. _Let op_ Deze naam moet exact overeenkomen!
