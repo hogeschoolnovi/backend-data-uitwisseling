@@ -20,7 +20,7 @@ In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in d
     * [Student opslaan](#1-student-aanmaken)
     * [Student opvragen](#2-student-opvragen)
     * [Alle Studenten opvragen](#3-alle-studenten-opvragen)
-    * [Student gegevens bewerken](*4-student-gegevens-bewerken)
+    * [Student gegevens bewerken](#4-student-gegevens-bewerken)
     * [Afbeelding voor student opslaan](#5-afbeelding-voor-student-opslaan)
     * [Student verwijderen](#6-student-verwijderen-uit-database)
     * [Afbeelding opslaan](#7-afbeelding-uploaden)
