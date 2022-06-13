@@ -17,7 +17,7 @@ In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in d
 ## Inhoud
 * [Beschrijving](#beschrijving)
 * [Rest endpoints](#rest-endpoints)
-    * [Student opslaan](#1-student-opslaan)
+    * [Student opslaan](#1-student-aanmaken)
     * [Student opvragen](#2-student-opvragen)
     * [Alle Studenten opvragen](#3-alle-studenten-opvragen)
     * [Student gegevens bewerken](*4-student-bewerken)
