@@ -1,4 +1,4 @@
-# NOVI Educational Backend
+# NOVI Studenten database
 
 ## Beschrijving
 Deze backend is gebouwd door NOVI en mag alleen worden gebruikt voor opleidings-doeleinden.
@@ -29,7 +29,7 @@ In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in d
 ## Rest endpoints
 Alle rest-endpoints draaien op deze server: http://localhost:8080 Dit is de basis-uri. Alle voorbeeld-data betreffende de endpoints zijn in JSON format weergegeven. 
 
-### 1. Student aanmaken.
+### 1. Student aanmaken
 `POST /students`
 
 Het aanmaken van een nieuwe student vereist de volgende informatie:
@@ -42,18 +42,18 @@ Het aanmaken van een nieuwe student vereist de volgende informatie:
 }
 ```
 
-### 2. Student opvragen.
+### 2. Specifieke student opvragen
 `GET /students/1001`
 
 Het ophalen van een student, gebeurd aan de hand van het studenten nummer. Deze sturen we mee via de url, in dit geval 1001.
 
 
-### 3. Alle studenten opvragen.
+### 3. Alle studenten opvragen
 `GET /students`
 
 Hiermee halen we alle geregistreerde studenten uit de database.
 
-### 4. Student gegevens bewerken.
+### 4. Student gegevens bewerken
 `PUT /students/1001`
 
 Door het studentnummer mee te geven in de url, kunnen we de student met dat studentnummer bewerken. Het json object dat mee gestuurd moet worden is:
@@ -68,13 +68,13 @@ Door het studentnummer mee te geven in de url, kunnen we de student met dat stud
 ```
 Hierbij zijn de waarde van de velden (de delen achter de dubbele punt) variabel en kunnen dus gewijzigd worden.
 
-### 5. Afbeelding voor student opslaan.
+### 5. Afbeelding voor student opslaan
 `POST /students/1001/photo`
 
 Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding te versturen onder de key: "file":
 
 
-### 6. Student verwijderen uit database.
+### 6. Student verwijderen uit database
 `DELETE /students/1001`
 
 Doormiddel van het studentnummer wat is mee gestuurd in de url, worden de student gegevens van de student met dit nummer verwijderd uit de database.
