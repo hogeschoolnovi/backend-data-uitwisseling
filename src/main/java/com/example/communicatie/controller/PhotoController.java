@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @RestController
+@CrossOrigin
 public class PhotoController {
     private final PhotoService service;
 
@@ -24,7 +25,7 @@ public class PhotoController {
     }
 
     //    post for single upload
-    @PostMapping("single/upload")
+    @PostMapping("/upload")
     FileUploadResponse singleFileUpload(@RequestParam("file") MultipartFile file){
 
         // next line makes url. example "http://localhost:8080/download/naam.jpg"
