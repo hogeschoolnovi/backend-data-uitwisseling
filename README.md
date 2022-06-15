@@ -1,18 +1,20 @@
-# NOVI Studenten database
+# NOVI Studenten database (backend)
 
 ## Beschrijving
 Deze backend is gebouwd door NOVI en mag alleen worden gebruikt voor opleidings-doeleinden.
 
-Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requesten voor een student en het uploaden en downloaden van een afbeelding. Het is niet mogelijk om andere informatie (naast `studentNumber`, `email`, `naam`, `opleiding` en `afbeelding`) op te slaan in deze database.
+Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de frontend en backend applicatie. Deze backend is ontwikkeld om dit te laten zien en werkt in combinatie met [deze](https://github.com/hogeschoolnovi/frontend-data-uitwisseling) frontend.
 
-Binnen de backend wordt gebruik gemaakt van een postgres database, deze draait op jdbc:postgresql://localhost:5432/communication. Deze instellingen staan in de application.properties. Deze zullen aangepast moeten worden als u deze applicatie op uw eigen pc wilt draaien. 
+Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requesten om studenten op te vragen, toe te voegen of te wijzigen en kun je bestanden uploaden en downloaden. Het is niet mogelijk om andere informatie (naast `studentNumber`, `email`, `naam`, `opleiding` en `afbeelding`) op te slaan in deze database, tenzij je de backend applicatie zelf aanpast.
+
+Binnen de backend wordt gebruik gemaakt van een PostGres database, deze draait op _jdbc:postgresql://localhost:5432/communication_. Deze instellingen staan in de `application.properties`. Deze zullen aangepast moeten worden als u deze applicatie op jouw locale machine wil draaien. 
 Pas in dat geval de volgende waarde aan:
-- spring.datasource.url (pas hier de naam "communication" aan, naar de naam van uw eigen database).
-- spring.datasource.username (verander deze waarde naar de naam van de hoofdgebruiker van uw database).
-- spring.datasource.password (verander deze waarde naar het wachtwoord van uw eigen database).
+- `spring.datasource.url` (pas hier de naam "communication" aan, naar de naam van uw eigen database).
+- `spring.datasource.username` (verander deze waarde naar de naam van de hoofdgebruiker van uw database).
+- `spring.datasource.password` (verander deze waarde naar het wachtwoord van uw eigen database).
 
 In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in de projectmap van de applicatie. Als u deze code cloned, moet ook de volgende waarde aangepast worden in de application.properties:
-- my.upload_location (pas deze locatie aan naar de plaats waar u het project op uw pc hebt staan).
+- `my.upload_location` (pas deze locatie aan naar de plaats waar u het project op uw pc hebt staan).
 
 ## Inhoud
 * [Beschrijving](#beschrijving)
@@ -71,7 +73,7 @@ Hierbij zijn de waarde van de velden (de delen achter de dubbele punt) variabel 
 ### 5. Afbeelding voor student opslaan
 `POST /students/1001/photo`
 
-Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding te versturen onder de key: "file":
+Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding als `formData` te versturen onder de key: `"file"`:
 
 
 ### 6. Student verwijderen uit database
