@@ -19,7 +19,6 @@ public class StudentService {
 
     private final FileUploadRepository uploadRepository;
 
-    @Autowired
     public StudentService(StudentRepository repository, FileUploadRepository uploadRepository){
         this.repository = repository;
         this.uploadRepository = uploadRepository;

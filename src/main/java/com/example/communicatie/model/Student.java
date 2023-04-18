@@ -3,11 +3,15 @@ package com.example.communicatie.model;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Student {
 
+    // Onderstaand is een "generated id" met een "sequence generator".
+    // De generatie van een id gebruikt altijd een sequence generator achter de schermen, maar we kunnen ook dus ook handmatig instellen aan welke regels die generatie moet voldoen.
+    // Het voornaamste nut van deze sequence generator is dat de start waarde van de id's begint bij 1003.
+    // Zoals je ziet heeft de @SequenceGenerator een "naam" attribuut. Deze naam gebruiken we in de @GeneratedValue om de generator te kunnen gebruiken (dus niet de "sequence_name" parameter).
     @Id
     @GeneratedValue(generator = "sequence-generator")
     @GenericGenerator(

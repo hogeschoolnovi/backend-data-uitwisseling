@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 @CrossOrigin
@@ -18,7 +18,7 @@ public class StudentController {
     private final StudentService service;
     private final PhotoController controller;
 
-    @Autowired
+
     public StudentController(StudentService service, PhotoController controller) {
         this.service = service;
         this.controller = controller;
