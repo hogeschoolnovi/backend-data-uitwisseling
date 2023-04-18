@@ -19,15 +19,12 @@ import java.util.Objects;
 
 @Service
 public class PhotoService {
-    @Value("${my.upload_location}")
-    private Path fileStoragePath;
+    private final Path fileStoragePath;
     private final String fileStorageLocation;
-
     private final FileUploadRepository repo;
 
     public PhotoService(@Value("${my.upload_location}") String fileStorageLocation, FileUploadRepository repo) {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
-
         this.fileStorageLocation = fileStorageLocation;
         this.repo = repo;
 
