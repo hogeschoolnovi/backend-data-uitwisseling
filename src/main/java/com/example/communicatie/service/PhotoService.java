@@ -1,6 +1,6 @@
 package com.example.communicatie.service;
 
-import com.example.communicatie.model.FileUploadResponse;
+import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.repository.FileUploadRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -48,7 +48,7 @@ public class PhotoService {
             throw new RuntimeException("Issue in storing the file", e);
         }
 
-        repo.save(new FileUploadResponse(fileName, file.getContentType(), url));
+        repo.save(new StudentPhoto(fileName, file.getContentType(), url));
 
         return fileName;
     }
@@ -67,6 +67,7 @@ public class PhotoService {
 
         if(resource.exists()&& resource.isReadable()) {
             return resource;
+//            return resource.getContentAsByteArray();
         } else {
             throw new RuntimeException("the file doesn't exist or not readable");
         }

@@ -1,27 +1,31 @@
 package com.example.communicatie.controller;
 
-import com.example.communicatie.model.FileUploadResponse;
 import com.example.communicatie.model.Student;
+import com.example.communicatie.service.PhotoService;
 import com.example.communicatie.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/students")
 public class StudentController {
 
-    private final StudentService service;
-    private final PhotoController controller;
+    private final StudentService studentService;
+    private final PhotoService photoService;
 
 
-    public StudentController(StudentService service, PhotoController controller) {
-        this.service = service;
-        this.controller = controller;
+    public StudentController(StudentService studentService, PhotoService photoService) {
+        this.studentService = studentService;
+        this.photoService = photoService;
     }
 
     @GetMapping
@@ -31,7 +35,7 @@ public class StudentController {
         List<Student> students;
 
 
-        students = service.getStudents();
+        students = studentService.getStudents();
 
 
         return students;
@@ -42,38 +46,43 @@ public class StudentController {
     @Transactional
     public Student getStudent(@PathVariable("id") Long studentNumber) {
 
-        return service.getStudent(studentNumber);
+        return studentService.getStudent(studentNumber);
 
     }
 
     @PostMapping
     public Student saveStudent(@RequestBody Student student) {
 
-        return service.saveStudent(student);
+        return studentService.saveStudent(student);
 
     }
 
     @PutMapping("/{studentNumber}")
     public Student updateStudent(@PathVariable Long studentNumber, @RequestBody Student student) {
 
-        return service.updateStudent(studentNumber, student);
+        return studentService.updateStudent(studentNumber, student);
 
     }
 
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable("id") Long studentNumber) {
 
-        service.deleteStudent(studentNumber);
+        studentService.deleteStudent(studentNumber);
 
     }
 
     @PostMapping("/{id}/photo")
-    public void assignPhotoToStudent(@PathVariable("id") Long studentNumber,
-                                     @RequestBody MultipartFile file) {
+    public ResponseEntity<Student> assignPhotoToStudent(@PathVariable("id") Long studentNumber,
+                                               @RequestBody MultipartFile file) {
 
-        FileUploadResponse photo = controller.singleFileUpload(file);
+//        StudentPhoto photo = controller.singleFileUpload(file);
 
-        service.assignPhotoToStudent(photo.getFileName(), studentNumber);
+        // next line makes url. example "http://localhost:8080/download/naam.jpg"
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath().path("/download/").path(Objects.requireNonNull(file.getOriginalFilename())).toUriString();
+
+        String fileName = photoService.storeFile(file, url);
+
+        return ResponseEntity.created(URI.create(url)).body(studentService.assignPhotoToStudent(fileName, studentNumber));
 
     }
 }
