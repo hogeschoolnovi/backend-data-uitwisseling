@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class FileUploadResponse {
+public class StudentPhoto {
 
     @Id
     private String fileName;
@@ -13,13 +13,13 @@ public class FileUploadResponse {
 
     private String url;
 
-    public FileUploadResponse(String fileName, String contentType, String url) {
+    public StudentPhoto(String fileName, String contentType, String url) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.url = url;
     }
 
-    public FileUploadResponse() {
+    public StudentPhoto() {
     }
 
     public String getFileName() {

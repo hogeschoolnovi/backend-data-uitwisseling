@@ -30,7 +30,7 @@ public class Student {
     private String course;
 
     @OneToOne
-    FileUploadResponse file;
+    StudentPhoto studentPhoto;
 
     public Student() {
     }
@@ -62,8 +62,8 @@ public class Student {
         return course;
     }
 
-    public FileUploadResponse getFile() {
-        return file;
+    public StudentPhoto getFile() {
+        return studentPhoto;
     }
 
     public void setStudentNumber(Long studentNumber) {
@@ -82,7 +82,7 @@ public class Student {
         this.course = course;
     }
 
-    public void setFile(FileUploadResponse file) {
-        this.file = file;
+    public void setFile(StudentPhoto studentPhoto) {
+        this.studentPhoto = studentPhoto;
     }
 }

@@ -1,11 +1,10 @@
 package com.example.communicatie.service;
 
 import com.example.communicatie.exception.RecordNotFoundException;
-import com.example.communicatie.model.FileUploadResponse;
+import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.model.Student;
 import com.example.communicatie.repository.FileUploadRepository;
 import com.example.communicatie.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,22 +92,24 @@ public class StudentService {
 
     }
 
-    public void assignPhotoToStudent(String name, Long studentNumber) {
+    public Student assignPhotoToStudent(String name, Long studentNumber) {
 
         Optional<Student> optionalStudent = repository.findById(studentNumber);
 
-        Optional<FileUploadResponse> fileUploadResponse = uploadRepository.findByFileName(name);
+        Optional<StudentPhoto> optionalPhoto = uploadRepository.findByFileName(name);
 
-        if (optionalStudent.isPresent() && fileUploadResponse.isPresent()) {
+        if (optionalStudent.isPresent() && optionalPhoto.isPresent()) {
 
-            FileUploadResponse photo = fileUploadResponse.get();
+            StudentPhoto photo = optionalPhoto.get();
 
             Student student = optionalStudent.get();
 
             student.setFile(photo);
 
-            repository.save(student);
+            return repository.save(student);
 
+        } else {
+            throw new RecordNotFoundException("student of foto niet gevonden");
         }
 
     }

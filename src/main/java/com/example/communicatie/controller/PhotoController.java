@@ -1,6 +1,6 @@
 package com.example.communicatie.controller;
 
-import com.example.communicatie.model.FileUploadResponse;
+import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.service.PhotoService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -22,20 +22,6 @@ public class PhotoController {
 
     public PhotoController(PhotoService service) {
         this.service = service;
-    }
-
-    //    post for single upload
-    @PostMapping("/upload")
-    FileUploadResponse singleFileUpload(@RequestParam("file") MultipartFile file){
-
-        // next line makes url. example "http://localhost:8080/download/naam.jpg"
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath().path("/download/").path(Objects.requireNonNull(file.getOriginalFilename())).toUriString();
-
-        String contentType = file.getContentType();
-
-        String fileName = service.storeFile(file, url);
-
-        return new FileUploadResponse(fileName, contentType, url );
     }
 
     //    get for single download
