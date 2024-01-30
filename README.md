@@ -16,6 +16,9 @@ Pas in dat geval de volgende waarde aan:
 In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in de projectmap van de applicatie. Als u deze code cloned, moet ook de volgende waarde aangepast worden in de application.properties:
 - `my.upload_location` (pas deze locatie aan naar de plaats waar u het project op uw pc hebt staan).
 
+### Disclaimer
+Dit project is een POC en heeft enkel de nodige functionaliteiten om het principe van upload/download uit te leggen. Dingen als DTO's ontbreken, maar dienen in de eindopdracht natuurlijk wel gebruikt te worden.
+
 ## Inhoud
 * [Beschrijving](#beschrijving)
 * [Rest endpoints](#rest-endpoints)
@@ -23,10 +26,12 @@ In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in d
     * [Student opvragen](#2-student-opvragen)
     * [Alle Studenten opvragen](#3-alle-studenten-opvragen)
     * [Student gegevens bewerken](#4-student-gegevens-bewerken)
-    * [Afbeelding voor student opslaan](#5-afbeelding-voor-student-opslaan)
-    * [Student verwijderen](#6-student-verwijderen-uit-database)
-    * [Afbeelding opslaan](#7-afbeelding-uploaden)
-    * [Afbeelding ophalen](#8-afbeelding-ophalen)
+    * [Student verwijderen](#5-student-verwijderen-uit-database)
+    * [Diploma voor Student opslaan](#6-afbeelding-uploaden)
+    * [Diploma voor Student ophalen](#7-afbeelding-ophalen)
+    * [Afbeelding voor student opslaan](#8-afbeelding-voor-student-opslaan)
+    * [Afbeelding voor student ophalen](#9-afbeelding-voor-student-opslaan)
+
 
 ## Rest endpoints
 Alle rest-endpoints draaien op deze server: http://localhost:8080 Dit is de basis-uri. Alle voorbeeld-data betreffende de endpoints zijn in JSON format weergegeven. 
@@ -58,36 +63,41 @@ Hiermee halen we alle geregistreerde studenten uit de database.
 ### 4. Student gegevens bewerken
 `PUT /students/1001`
 
-Door het studentnummer mee te geven in de url, kunnen we de student met dat studentnummer bewerken. Het json object dat mee gestuurd moet worden is:
+Door het studentnummer mee te geven in de url, kunnen we de student met dat studentnummer bewerken. Je kunt via dit endpoint niet de foto of het diploma van een student bewerken. Het json object dat mee gestuurd moet worden is:
 
 ```json
 {
     "emailAddress": "sam.b@test.nl",
     "name": "Sam Barnhoorn",
-    "course": "Back-end",
-    "fileDocument": null
+    "course": "Back-end"
 }
 ```
 Hierbij zijn de waarde van de velden (de delen achter de dubbele punt) variabel en kunnen dus gewijzigd worden.
 
-### 5. Afbeelding voor student opslaan
-`POST /students/1001/photo`
 
-Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding als `formData` te versturen onder de key: `"file"`:
-
-
-### 6. Student verwijderen uit database
+### 5. Student verwijderen uit database
 `DELETE /students/1001`
 
 Doormiddel van het studentnummer wat is mee gestuurd in de url, worden de student gegevens van de student met dit nummer verwijderd uit de database.
 
-### 7. Afbeelding uploaden
-`POST /upload`
+### 6. Afbeelding voor student opslaan
+`POST /students/1001/photo`
+
+Er kan een pasfoto worden toegevoegd aan een student door een afbeelding te uploaden naar deze url, waarbij 1001 het studentnummer is. Dit gebeurd door de afbeelding in de requestbody als `formData` te versturen onder de key: `"file"`:
+
+### 7. Afbeelding voor student ophalen
+`GET /students/1001/photo`
+
+Elke student heeft 1 foto. Dit endpoint geeft je de foto die bij een student hoort. Hiervoor hoef je enkel het id van de student op te geven, bijvoorbeeld 1001. Als het request verzonden wordt in PostMan, zal de foto zichtbaar worden als het request succesvol is, omdat het request in de `content-type` header aangeeft dat het een `image/*` is. Ook in de browser zal de foto zichtbaar worden.
 
 
-Er kan een pasfoto worden toegevoegd aan de database door een afbeelding te uploaden naar deze url. Dit gebeurd door de afbeelding te versturen onder de key: "file":
+### 8. Diploma voor student opslaan
+`POST /students/1001/diploma`
 
-### 8. Afbeelding ophalen
-`GET /download/foto.JPG`
 
-Door in deze url de naam van de foto mee te sturen, wordt de foto opgehaald uit de filestorage. _Let op_ Deze naam moet exact overeenkomen!
+Een diploma is, net als een foto, een bestand dat je kunt uploaden. Deze wordt echter niet in het filesystem opgeslagen, maar wordt als byte array in de database opgeslagen. Het bestand wordt in de requestbody als `formData` ingevuld onder de `"file"` key.
+
+### 9. Diploma voor student ophalen
+`GET /students/1001/diploma`
+
+Door in deze url het id van de student mee te sturen, wordt het diploma opgehaald uit de database en weergegeven in de responsebody.

@@ -1,18 +1,14 @@
 package com.example.communicatie.controller;
 
-import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.service.PhotoService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -25,6 +21,7 @@ public class PhotoController {
     }
 
     //    get for single download
+    @Deprecated
     @GetMapping("/download/{fileName}")
     ResponseEntity<Resource> downLoadSingleFile(@PathVariable String fileName, HttpServletRequest request) {
 

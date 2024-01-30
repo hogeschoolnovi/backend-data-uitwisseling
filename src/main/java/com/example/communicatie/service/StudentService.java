@@ -1,10 +1,12 @@
 package com.example.communicatie.service;
 
 import com.example.communicatie.exception.RecordNotFoundException;
+import com.example.communicatie.model.Diploma;
 import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.model.Student;
 import com.example.communicatie.repository.FileUploadRepository;
 import com.example.communicatie.repository.StudentRepository;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +20,12 @@ public class StudentService {
 
     private final FileUploadRepository uploadRepository;
 
-    public StudentService(StudentRepository repository, FileUploadRepository uploadRepository){
+    private final PhotoService photoService;
+
+    public StudentService(StudentRepository repository, FileUploadRepository uploadRepository, PhotoService photoService){
         this.repository = repository;
         this.uploadRepository = uploadRepository;
+        this.photoService = photoService;
     }
 
     public List<Student> getStudents() {
@@ -70,10 +75,10 @@ public class StudentService {
             if(student.getName() != null){
                 old.setName(student.getName());
             }
-            if(old.getFile() != null && student.getFile() != null){
-                old.setFile(student.getFile());
-            } else if (old.getFile() != null) {
-                old.setFile(old.getFile());
+            if(old.getStudentPhoto() != null && student.getStudentPhoto() != null){
+                old.setStudentPhoto(student.getStudentPhoto());
+            } else if (old.getStudentPhoto() != null) {
+                old.setStudentPhoto(old.getStudentPhoto());
             }
 
             return repository.save(old);
@@ -92,6 +97,23 @@ public class StudentService {
 
     }
 
+    public Resource getPhotoFromStudent(Long studentNumber){
+
+        Optional<Student> optionalStudent = repository.findById(studentNumber);
+        if(optionalStudent.isEmpty()){
+            throw new RecordNotFoundException("Student with student number " + studentNumber + " not found.");
+        }
+
+        StudentPhoto photo = optionalStudent.get().getStudentPhoto();
+
+        if(photo == null){
+            throw new RecordNotFoundException("Student " + studentNumber + " had no photo.");
+        }
+
+        return photoService.downLoadFile(photo.getFileName());
+    }
+
+
     public Student assignPhotoToStudent(String name, Long studentNumber) {
 
         Optional<Student> optionalStudent = repository.findById(studentNumber);
@@ -104,7 +126,7 @@ public class StudentService {
 
             Student student = optionalStudent.get();
 
-            student.setFile(photo);
+            student.setStudentPhoto(photo);
 
             return repository.save(student);
 
@@ -114,4 +136,21 @@ public class StudentService {
 
     }
 
+    public Student addDiploma(Long studentNumber, Diploma diploma) {
+        Optional<Student> optionalStudent = repository.findById(studentNumber);
+        if(optionalStudent.isEmpty()){
+            throw new RecordNotFoundException("Student with student number " + studentNumber + " not found.");
+        }
+        Student student = optionalStudent.get();
+        student.setDiploma(diploma);
+        return repository.save(student);
+    }
+
+    public Diploma getDiplomaFromStudent(Long studentNumber) {
+        Optional<Student> optionalStudent = repository.findById(studentNumber);
+        if(optionalStudent.isEmpty()){
+            throw new RecordNotFoundException("Student with student number " + studentNumber + " not found.");
+        }
+        return optionalStudent.get().getDiploma();
+    }
 }

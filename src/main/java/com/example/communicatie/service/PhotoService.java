@@ -67,7 +67,6 @@ public class PhotoService {
 
         if(resource.exists()&& resource.isReadable()) {
             return resource;
-//            return resource.getContentAsByteArray();
         } else {
             throw new RuntimeException("the file doesn't exist or not readable");
         }

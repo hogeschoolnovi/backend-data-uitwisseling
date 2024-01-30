@@ -6,6 +6,9 @@ import jakarta.persistence.Id;
 @Entity
 public class StudentPhoto {
 
+
+    // Het opgeslagen bestand staat niet in deze klasse opgeslage. Deze klasse heeft enkel een verwijzing naar de naam van het bestand.
+    // We weten waar het bestand staat opgeslagen, dus met de naam kunnen we naar het bestand verwijzen als "./uploads/{fileName}"
     @Id
     private String fileName;
 

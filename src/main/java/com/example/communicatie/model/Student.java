@@ -1,5 +1,6 @@
 package com.example.communicatie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -28,6 +29,10 @@ public class Student {
     private String emailAddress;
     private String name;
     private String course;
+
+    @OneToOne
+    @JsonIgnoreProperties(value = {"contents","contentType"} )
+    Diploma diploma;
 
     @OneToOne
     StudentPhoto studentPhoto;
@@ -62,8 +67,12 @@ public class Student {
         return course;
     }
 
-    public StudentPhoto getFile() {
+    public StudentPhoto getStudentPhoto() {
         return studentPhoto;
+    }
+
+    public Diploma getDiploma() {
+        return diploma;
     }
 
     public void setStudentNumber(Long studentNumber) {
@@ -82,7 +91,12 @@ public class Student {
         this.course = course;
     }
 
-    public void setFile(StudentPhoto studentPhoto) {
+    public void setStudentPhoto(StudentPhoto studentPhoto) {
         this.studentPhoto = studentPhoto;
+    }
+
+
+    public void setDiploma(Diploma diploma) {
+        this.diploma = diploma;
     }
 }
