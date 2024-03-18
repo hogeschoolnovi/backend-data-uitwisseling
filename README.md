@@ -5,7 +5,7 @@ Deze backend is gebouwd door NOVI en mag alleen worden gebruikt voor opleidings-
 
 Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de frontend en backend applicatie. Deze backend is ontwikkeld om dit te laten zien en werkt in combinatie met [deze](https://github.com/hogeschoolnovi/frontend-data-uitwisseling) frontend.
 
-Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requesten om studenten op te vragen, toe te voegen of te wijzigen en kun je bestanden uploaden en downloaden. Het is niet mogelijk om andere informatie (naast `studentNumber`, `email`, `naam`, `opleiding` en `afbeelding`) op te slaan in deze database, tenzij je de backend applicatie zelf aanpast.
+Wanneer studenten de Fullstack leerlijn volgen, ontstaan veel vragen over hoe de communicatie werkt tussen de front-end en back-end applicattie. Deze backend is ontwikkeld voor het demonstreren van deze communicatie. Hierbij kan gebruik worden gemaakt van de _CRUD_ requests om studenten op te vragen, toe te voegen of te wijzigen en kun je bestanden uploaden en downloaden. Het is niet mogelijk om andere informatie (naast `studentNumber`, `email`, `naam`, `opleiding`, `afbeelding` en `diploma`) op te slaan in deze database, tenzij je de backend applicatie zelf aanpast.
 
 Binnen de backend wordt gebruik gemaakt van een PostGres database, deze draait op _jdbc:postgresql://localhost:5432/communication_. Deze instellingen staan in de `application.properties`. Deze zullen aangepast moeten worden als u deze applicatie op jouw locale machine wil draaien. 
 Pas in dat geval de volgende waarde aan:
@@ -13,11 +13,12 @@ Pas in dat geval de volgende waarde aan:
 - `spring.datasource.username` (verander deze waarde naar de naam van de hoofdgebruiker van uw database).
 - `spring.datasource.password` (verander deze waarde naar het wachtwoord van uw eigen database).
 
-In deze applicatie worden afbeeldingen niet opgeslagen in de database, maar in de projectmap van de applicatie. Als u deze code cloned, moet ook de volgende waarde aangepast worden in de application.properties:
-- `my.upload_location` (pas deze locatie aan naar de plaats waar u het project op uw pc hebt staan).
+In deze applicatie worden twee manieren gedemonstreerd om bestanden op te slaan. 
+- Het opslaan in de database. Het diploma van de student word in de database opgeslagen.
+- Het opslaan in het bestandssysteem van je computer (of server). De foto van de student word in het bestandssysteem opgeslagen. 
 
 ### Disclaimer
-Dit project is een POC en heeft enkel de nodige functionaliteiten om het principe van upload/download uit te leggen. Dingen als DTO's ontbreken, maar dienen in de eindopdracht natuurlijk wel gebruikt te worden.
+Dit project is een POC en heeft enkel de nodige functionaliteiten om het principe van upload/download uit te leggen. Dingen als DTO's en security ontbreken, maar dienen in de eindopdracht natuurlijk wel gebruikt te worden.
 
 ## Inhoud
 * [Beschrijving](#beschrijving)
@@ -43,8 +44,8 @@ Het aanmaken van een nieuwe student vereist de volgende informatie:
 
 ```json
 {
-   "emailAddress": "johan.v@test.nl",
-   "name": "Johan van Oosten",
+   "emailAddress": "rowan.p@test.nl",
+   "name": "Rowan Plooij",
    "course": "Back-end"
 }
 ```
