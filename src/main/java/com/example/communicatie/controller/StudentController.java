@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /*
     Let op: Dit voorbeeld dient ter illustratie van de upload/download en de samenwerking met de frontend.
-            Voor de simpliciteit is hier geen gebruik gemaakt van DTO's
+            Voor de simpliciteit is hier geen gebruik gemaakt van DTO's of security
  */
 @CrossOrigin
 @RestController
