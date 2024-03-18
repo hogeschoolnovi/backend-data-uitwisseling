@@ -23,33 +23,24 @@ public class PhotoService {
     private final String fileStorageLocation;
     private final FileUploadRepository repo;
 
-    public PhotoService(@Value("${my.upload_location}") String fileStorageLocation, FileUploadRepository repo) {
+    public PhotoService(@Value("${my.upload_location}") String fileStorageLocation, FileUploadRepository repo) throws IOException{
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
         this.repo = repo;
 
-        try {
-            Files.createDirectories(fileStoragePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Issue in creating file directory");
-        }
+        Files.createDirectories(fileStoragePath);
+
 
     }
 
-    public String storeFile(MultipartFile file, String url) {
+    public String storeFile(MultipartFile file) throws IOException{
 
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-
         Path filePath = Paths.get(fileStoragePath + "\\" + fileName);
 
-        try {
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Issue in storing the file", e);
-        }
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        repo.save(new StudentPhoto(fileName, file.getContentType(), url));
-
+        repo.save(new StudentPhoto(fileName));
         return fileName;
     }
 
@@ -67,7 +58,6 @@ public class PhotoService {
 
         if(resource.exists()&& resource.isReadable()) {
             return resource;
-//            return resource.getContentAsByteArray();
         } else {
             throw new RuntimeException("the file doesn't exist or not readable");
         }
