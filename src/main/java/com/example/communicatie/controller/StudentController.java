@@ -16,12 +16,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
+/*
+    Let op: Dit voorbeeld dient ter illustratie van de upload/download en de samenwerking met de frontend.
+            Voor de simpliciteit is hier geen gebruik gemaakt van DTO's
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/students")
@@ -40,58 +45,51 @@ public class StudentController {
 
     @GetMapping
     @Transactional
-    public List<Student> getStudents() {
-
-        List<Student> students;
-
-
-        students = studentService.getStudents();
-
-
-        return students;
-
+    public ResponseEntity<List<Student>> getStudents() {
+        return ResponseEntity.ok(studentService.getStudents());
     }
 
     @GetMapping("/{id}")
     @Transactional
-    public Student getStudent(@PathVariable("id") Long studentNumber) {
-
-        return studentService.getStudent(studentNumber);
-
+    public ResponseEntity<Student> getStudent(@PathVariable("id") Long studentNumber) {
+        return ResponseEntity.ok(studentService.getStudent(studentNumber));
     }
 
     @PostMapping
-    public Student saveStudent(@RequestBody Student student) {
-
-        return studentService.saveStudent(student);
-
+    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+        Student savedStudent = studentService.saveStudent(student);
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/students/")
+                .path(Objects.requireNonNull(savedStudent.getStudentNumber().toString()))
+                .toUriString();
+        return ResponseEntity.created(URI.create(url)).body(savedStudent);
     }
 
     @PutMapping("/{studentNumber}")
-    public Student updateStudent(@PathVariable Long studentNumber, @RequestBody Student student) {
-
-        return studentService.updateStudent(studentNumber, student);
-
+    public ResponseEntity<Student> updateStudent(@PathVariable Long studentNumber, @RequestBody Student student) {
+        return ResponseEntity.ok(studentService.updateStudent(studentNumber, student));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable("id") Long studentNumber) {
-
+    public ResponseEntity<Void> deleteStudent(@PathVariable("id") Long studentNumber) {
         studentService.deleteStudent(studentNumber);
-
+        return ResponseEntity.noContent().build();
     }
 
 
-    // Zie dat de POST methode voor photo (filesystem) en dilpoma (database) bijna hetzelfde zijn. Er wordt enkel een andere "storeFile" methode gebruikt.
+    // Zie dat de POST methode voor photo (filesystem) en diploma (database) bijna hetzelfde zijn.
+    // Er wordt enkel een andere "storeFile" methode gebruikt.
 
     @PostMapping("/{id}/photo")
     public ResponseEntity<Student> addPhotoToStudent(@PathVariable("id") Long studentNumber,
-                                               @RequestBody MultipartFile file) {
-
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath().path("/students/").path(Objects.requireNonNull(studentNumber.toString())).path("/photo").toUriString();
-
-        String fileName = photoService.storeFile(file, url);
-
+                                                     @RequestBody MultipartFile file)
+    throws IOException {
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/students/")
+                .path(Objects.requireNonNull(studentNumber.toString()))
+                .path("/photo")
+                .toUriString();
+        String fileName = photoService.storeFile(file);
         Student student = studentService.assignPhotoToStudent(fileName, studentNumber);
 
         return ResponseEntity.created(URI.create(url)).body(student);
@@ -101,7 +99,11 @@ public class StudentController {
     @PostMapping("/{id}/diploma")
     public ResponseEntity<Student> addDiplomaToStudent(@PathVariable("id") Long studentNumber,
                                                        @RequestBody MultipartFile file) throws IOException{
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath().path("/students/").path(Objects.requireNonNull(studentNumber.toString())).path("/diploma").toUriString();
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/students/")
+                .path(Objects.requireNonNull(studentNumber.toString()))
+                .path("/diploma")
+                .toUriString();
 
         Diploma diploma = diplomaService.storeFile(file, url);
 
@@ -110,7 +112,8 @@ public class StudentController {
         return ResponseEntity.created(URI.create(url)).body(student);
     }
 
-//    Zie dat ook de get methode voor photo (filesystem) en diploma (database) bijna hetzelfde zijn. Enkel de returntype van de methode is anders.
+//    Zie dat ook de get methode voor photo (filesystem) en diploma (database) bijna hetzelfde zijn.
+//    Enkel de returntype van de methode is anders.
 
     @GetMapping("/{id}/photo")
     public ResponseEntity<Resource> getStudentPhoto(@PathVariable("id") Long studentNumber, HttpServletRequest request){
@@ -121,6 +124,13 @@ public class StudentController {
         try{
             mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         } catch (IOException e) {
+            /*
+            "application/octet-steam" is de generieke mime type voor byte data.
+            Het is beter om een specifiekere mimetype te gebruiken, zoals "image/jpeg".
+            Mimetype is nodig om de frontend te laten weten welke soort data het is.
+            Met de juiste MimeType en Content-Disposition, kun je de plaatjes of PDFs die je upload
+            zelfs in de browser weergeven.
+             */
             mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 

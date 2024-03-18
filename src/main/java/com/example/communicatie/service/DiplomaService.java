@@ -19,7 +19,16 @@ public class DiplomaService {
 
     public Diploma storeFile(MultipartFile file, String url) throws IOException {
 
-        Diploma diploma = new Diploma(file.getOriginalFilename(), file.getContentType(), url, file.getBytes());
+        /*
+        Wanneer je bestanden in de database opslaat, is het belangrijk om ook
+        de "content type" en de "original filename" expliciet op te slaan.
+        Deze informatie gaat anders namelijk verloren.
+         */
+        String originalFileName = file.getOriginalFilename();
+        String contentType = file.getContentType();
+        byte[] bytes = file.getBytes();
+
+        Diploma diploma = new Diploma(originalFileName, contentType, url , bytes);
 
         return diplomaRepository.save(diploma);
     }

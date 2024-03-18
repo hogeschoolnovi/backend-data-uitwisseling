@@ -95,7 +95,6 @@ public class Student {
         this.studentPhoto = studentPhoto;
     }
 
-
     public void setDiploma(Diploma diploma) {
         this.diploma = diploma;
     }

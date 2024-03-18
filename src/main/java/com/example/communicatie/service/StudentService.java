@@ -6,6 +6,7 @@ import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.model.Student;
 import com.example.communicatie.repository.FileUploadRepository;
 import com.example.communicatie.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -29,39 +30,27 @@ public class StudentService {
     }
 
     public List<Student> getStudents() {
-
         return repository.findAll();
-
     }
 
     public Student getStudent(Long studentNumber) {
-
         Optional<Student> student = repository.findById(studentNumber);
 
         if(student.isPresent()) {
-
             return student.get();
-
         } else {
-
             throw new RecordNotFoundException("Student does not exist");
-
         }
-
     }
 
     public Student saveStudent(Student student) {
-
         return repository.save(student);
-
     }
 
     public Student updateStudent(Long studentNumber, Student student) {
-
         Optional<Student> optionalStudent = repository.findById(studentNumber);
 
         if (optionalStudent.isPresent()) {
-
             Student old = optionalStudent.get();
             if(student.getStudentNumber() != null){
                 old.setStudentNumber(studentNumber);
@@ -77,65 +66,47 @@ public class StudentService {
             }
             if(old.getStudentPhoto() != null && student.getStudentPhoto() != null){
                 old.setStudentPhoto(student.getStudentPhoto());
-            } else if (old.getStudentPhoto() != null) {
-                old.setStudentPhoto(old.getStudentPhoto());
             }
-
             return repository.save(old);
-
         } else {
-
             throw new RecordNotFoundException("Student does not exist");
-
         }
 
     }
 
     public void deleteStudent(Long studentNumber) {
-
         repository.deleteById(studentNumber);
-
     }
 
+    @Transactional
     public Resource getPhotoFromStudent(Long studentNumber){
-
         Optional<Student> optionalStudent = repository.findById(studentNumber);
         if(optionalStudent.isEmpty()){
             throw new RecordNotFoundException("Student with student number " + studentNumber + " not found.");
         }
-
         StudentPhoto photo = optionalStudent.get().getStudentPhoto();
-
         if(photo == null){
             throw new RecordNotFoundException("Student " + studentNumber + " had no photo.");
         }
-
         return photoService.downLoadFile(photo.getFileName());
     }
 
-
-    public Student assignPhotoToStudent(String name, Long studentNumber) {
-
+    @Transactional
+    public Student assignPhotoToStudent(String filename, Long studentNumber) {
         Optional<Student> optionalStudent = repository.findById(studentNumber);
-
-        Optional<StudentPhoto> optionalPhoto = uploadRepository.findByFileName(name);
+        Optional<StudentPhoto> optionalPhoto = uploadRepository.findByFileName(filename);
 
         if (optionalStudent.isPresent() && optionalPhoto.isPresent()) {
-
             StudentPhoto photo = optionalPhoto.get();
-
             Student student = optionalStudent.get();
-
             student.setStudentPhoto(photo);
-
             return repository.save(student);
-
         } else {
             throw new RecordNotFoundException("student of foto niet gevonden");
         }
-
     }
 
+    @Transactional
     public Student addDiploma(Long studentNumber, Diploma diploma) {
         Optional<Student> optionalStudent = repository.findById(studentNumber);
         if(optionalStudent.isEmpty()){
@@ -146,6 +117,7 @@ public class StudentService {
         return repository.save(student);
     }
 
+    @Transactional
     public Diploma getDiplomaFromStudent(Long studentNumber) {
         Optional<Student> optionalStudent = repository.findById(studentNumber);
         if(optionalStudent.isEmpty()){

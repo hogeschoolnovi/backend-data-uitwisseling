@@ -13,14 +13,12 @@ public class Diploma {
     private Long id;
     private String title;
     private String url;
-
-
-
     private String contentType;
 
-    // Om een bestand of foto op te slaan in de database, heb je de @Lob (Large OBject) annotatie nodig.
-    // Deze annotatie zorgt er voor dat er genoeg ruimte wordt gereserveerd in de database voor een groot object.
-
+    /* Om een bestand of foto op te slaan in de database, heb je de @Lob (Large Object) annotatie nodig.
+       Deze annotatie zorgt er voor dat er genoeg ruimte wordt gereserveerd in de database
+       voor een groot object.
+    */
     @Lob
     private byte[] contents;
 
