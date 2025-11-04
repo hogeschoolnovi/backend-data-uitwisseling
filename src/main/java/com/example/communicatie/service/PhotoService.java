@@ -20,12 +20,10 @@ import java.util.Objects;
 @Service
 public class PhotoService {
     private final Path fileStoragePath;
-    private final String fileStorageLocation;
     private final FileUploadRepository repo;
 
     public PhotoService(@Value("${my.upload_location}") String fileStorageLocation, FileUploadRepository repo) throws IOException{
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
-        this.fileStorageLocation = fileStorageLocation;
         this.repo = repo;
 
         Files.createDirectories(fileStoragePath);
@@ -46,7 +44,7 @@ public class PhotoService {
 
     public Resource downLoadFile(String fileName) {
 
-        Path path = Paths.get(fileStorageLocation).toAbsolutePath().resolve(fileName);
+        Path path = fileStoragePath.resolve(fileName);
 
         Resource resource;
 
