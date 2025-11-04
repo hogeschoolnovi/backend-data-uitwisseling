@@ -1,5 +1,6 @@
 package com.example.communicatie.service;
 
+import com.example.communicatie.exception.ReadFileException;
 import com.example.communicatie.model.StudentPhoto;
 import com.example.communicatie.repository.FileUploadRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,13 +52,13 @@ public class PhotoService {
         try {
             resource = new UrlResource(path.toUri());
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Issue in reading the file", e);
+            throw new ReadFileException("Issue in reading the file", e);
         }
 
         if(resource.exists()&& resource.isReadable()) {
             return resource;
         } else {
-            throw new RuntimeException("the file doesn't exist or not readable");
+            throw new ReadFileException("the file doesn't exist or not readable");
         }
     }
 

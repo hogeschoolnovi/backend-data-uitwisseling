@@ -1,5 +1,6 @@
 package com.example.communicatie.controller;
 
+import com.example.communicatie.exception.ReadFileException;
 import com.example.communicatie.exception.RecordNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,16 @@ public class ExceptionController {
 
     }
 
+    @ExceptionHandler(value = ReadFileException.class)
+    public ResponseEntity<String> exception(ReadFileException exception) {
+
+        logger.warn(exception.getMessage());
+        return ResponseEntity.internalServerError().body(exception.getMessage());
+
+    }
+
     @ExceptionHandler(value = IOException.class)
-    public ResponseEntity<String> exeption(IOException exception){
+    public ResponseEntity<String> exception(IOException exception){
         String message = "Problemen met file opslag";
         logger.warn(message);
         return ResponseEntity.internalServerError().body(message);
